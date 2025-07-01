@@ -113,14 +113,9 @@ int main() {
     .zoom = 1,
   };
 
-  // game settings - platforms and world
-  float platform_spacing = 0.01;
-  int platform_x = abs(window_width * 0.1);
-  int platform_max_y = window_height * 0.8;
-  int platform_min_y = window_height * 0.2;
   int world_width = window_width * 10;
   int platform_width = abs(window_width * 0.3);
-  int platform_count = world_width / (platform_width + platform_spacing * window_width);
+  int platform_count = world_width / (platform_width + 0.2 * window_width);
 
   // create array of surfaces
   surface surfaces[platform_count + 1];
@@ -131,6 +126,11 @@ int main() {
   surfaces[0].width = window_width * 10;
   surfaces[0].height = 10;
 
+  // create variables for creating random platforms
+  int platform_x = abs(window_width * 0.1);
+  int platform_max_y = window_height * 0.7;
+  int platform_min_y = window_height * 0.1;
+
   // create random platforms with a for loop
   for (int i = 1; i <= platform_count; i++) {
 
@@ -139,7 +139,7 @@ int main() {
     surfaces[i].width = abs(window_width * 0.3);
     surfaces[i].height = abs(window_height * 0.05);
 
-    platform_x += surfaces[i].width + abs(window_width * platform_spacing);
+    platform_x += surfaces[i].width + abs(window_width * 0.3 / 3);
 
   }
 
@@ -160,10 +160,10 @@ int main() {
     
     // only scroll with ball's movement at ends of screen
 
-    if (ball.x > window_width * 0.6) {
-      camera.offset.x = -(ball.x - window_width * 0.6);
-    } else if (ball.x < window_width * 0.4) {
-      camera.offset.x = -(ball.x - window_width * 0.4);
+    if (ball.x > window_width * 0.8) {
+      camera.offset.x = -(ball.x - window_width * 0.8);
+    } else if (ball.x < window_width * 0.2) {
+      camera.offset.x = -(ball.x - window_width * 0.2);
     }
 
     // make sure world has starting boundary

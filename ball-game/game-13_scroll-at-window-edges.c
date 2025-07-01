@@ -6,9 +6,6 @@
 // needed for abs
 #include "stdlib.h"
 
-// needed for random number
-#include <time.h>
-
 // *** global objects ***
 
 // create struct for ball
@@ -29,11 +26,6 @@ typedef struct {
 } surface;
 
 // *** functions ***
-
-// random number func - returns a random float (a number w/ decimal point) from 0 to 1
-float rand_float() {
-  return (float) ((float) rand()/(float) RAND_MAX);
-}
 
 // create function to make sure ball is on a surface before allowing player to jump
 // we don't want double jumps / multiple jumps like in flappy bird games
@@ -77,8 +69,6 @@ int ball_on_surface(Ball ball, surface surfaces[], int count) {
 // main entry point to program
 int main() {
 
-  srand(time(0));
-
   // set window dimensions
   int window_width = 800;
   int window_height = 600;
@@ -113,35 +103,26 @@ int main() {
     .zoom = 1,
   };
 
-  // game settings - platforms and world
-  float platform_spacing = 0.01;
-  int platform_x = abs(window_width * 0.1);
-  int platform_max_y = window_height * 0.8;
-  int platform_min_y = window_height * 0.2;
-  int world_width = window_width * 10;
-  int platform_width = abs(window_width * 0.3);
-  int platform_count = world_width / (platform_width + platform_spacing * window_width);
-
   // create array of surfaces
-  surface surfaces[platform_count + 1];
-  
-  // create floor
+  surface surfaces[3];
+
   surfaces[0].x = 0;
   surfaces[0].y = window_height - 10;
-  surfaces[0].width = window_width * 10;
+  surfaces[0].width = window_width;
   surfaces[0].height = 10;
 
-  // create random platforms with a for loop
-  for (int i = 1; i <= platform_count; i++) {
+  surfaces[1].x = abs(window_width * 0.1);
+  surfaces[1].y = abs(window_height * 0.7);
+  surfaces[1].width = abs(window_width * 0.3);
+  surfaces[1].height = abs(window_height * 0.05);
 
-    surfaces[i].x = platform_x;
-    surfaces[i].y = abs(rand_float() * platform_max_y) + platform_min_y;
-    surfaces[i].width = abs(window_width * 0.3);
-    surfaces[i].height = abs(window_height * 0.05);
+  surfaces[2].x = abs(window_width * 0.3);
+  surfaces[2].y = abs(window_height * 0.5);
+  surfaces[2].width = abs(window_width * 0.3);
+  surfaces[2].height = abs(window_height * 0.05);
 
-    platform_x += surfaces[i].width + abs(window_width * platform_spacing);
-
-  }
+  // create a variable for number of surfaces
+  int surface_count = sizeof(surfaces) / sizeof(surface);
 
   // initialize window
   InitWindow(window_width, window_height, "Red Ball Game");
@@ -160,15 +141,10 @@ int main() {
     
     // only scroll with ball's movement at ends of screen
 
-    if (ball.x > window_width * 0.6) {
-      camera.offset.x = -(ball.x - window_width * 0.6);
-    } else if (ball.x < window_width * 0.4) {
-      camera.offset.x = -(ball.x - window_width * 0.4);
-    }
-
-    // make sure world has starting boundary
-    if (camera.offset.x > 0) {
-      camera.offset.x = 0;
+    if (ball.x > window_width * 0.8) {
+      camera.offset.x = -(ball.x - window_width * 0.8);
+    } else if (ball.x < window_width * 0.2) {
+      camera.offset.x = -(ball.x - window_width * 0.2);
     }
 
     // make ball drop (gravity)
@@ -184,7 +160,7 @@ int main() {
     }
 
     // create variable for surface that the ball is on
-    int current_surface = ball_on_surface(ball, surfaces, platform_count);
+    int current_surface = ball_on_surface(ball, surfaces, surface_count);
     
     // make ball jump only when on the ground
     if (current_surface != -1) {
@@ -219,7 +195,7 @@ int main() {
     ClearBackground(WHITE);
 
     // loop through surfaces array and draw surfaces
-    for(int i = 0; i < platform_count; i++)  {
+    for(int i = 0; i < surface_count; i++)  {
       DrawRectangle(
         surfaces[i].x,
         surfaces[i].y,
